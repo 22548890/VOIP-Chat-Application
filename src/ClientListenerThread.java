@@ -3,6 +3,7 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import javax.sound.sampled.*;
 import javax.swing.*;
 
 /**
@@ -65,8 +66,9 @@ public class ClientListenerThread implements Runnable {
             try {
                 printMessage((Message) ois.readObject());
             } catch (Exception e) {
-                closeEverything();
                 System.out.println("error 2");
+                closeEverything();
+
             }
         }
     }
@@ -105,22 +107,38 @@ public class ClientListenerThread implements Runnable {
                 listModelRooms.addElement(message.text().split(" - ", 2)[1]);
             }
         } else if (message.text().startsWith("/vn")) {
-            String encodedString = message.text().substring(3);
+            String encodedString = message.text().substring(4);
             byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
             try {
+
                 Files.write(Paths.get("rec.wav"), decodedBytes);
             } catch (IOException e) {
                 System.out.println("Error writing file");
             }
             // set message to voice note received
-            msg = "Voice note received - type /listen to listen";
-            // todo add command to listen
-            message.setText(msg);
+            // msg = "Voice note received - type /listen to listen";
+            message.setText("Voice note received - type /listen to listen");
+        } else if (message.text().startsWith("/listen")) {
+            // play sound file java sound api
+            File voiceNoteFile = new File("rec.wav");
+            playSound(voiceNoteFile);
+            message.setText("Voice note played");
         }
         msg += ": " + message.text();
         System.out.println(msg);
         enteredText.insert(msg + "\n", enteredText.getText().length());
+    }
 
+    private void playSound(File voiceNoteFile) {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(voiceNoteFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            Thread.sleep(clip.getMicrosecondLength() / 1000);
+        } catch (Exception e) {
+            System.out.println("Error playing sound: " + e.getMessage());
+        }
     }
 
     /**

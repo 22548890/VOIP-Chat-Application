@@ -27,6 +27,7 @@ public class Client implements ActionListener {
     private JList<String> roomsList;
     private static TargetDataLine line = null;
     private boolean bRecord = false;
+    final boolean recordFlag = false;
 
     /**
      * Performs actions regarding the GUI
@@ -38,66 +39,74 @@ public class Client implements ActionListener {
         // get and send text from typedText.getText()
         if (e.getSource() == btnSend) {
             msg = typedText.getText();
+            if (msg.equals("/listen")) {
+                msg += " ";
+            }
             sendMessage(msg);
             typedText.setText("");
-            // IF BTNvN PRESSED
 
         } else {
-            if (bRecord == false) {
-                bRecord = true;
-                try {
-                    Image img = ImageIO.read(getClass().getResource("/2.png"));
-                    btnVN.setIcon(new ImageIcon(img));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                // record audio using sound API
-                AudioFormat format = new AudioFormat(8000, 8, 2, true, true);
-                DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-
-                try {
-                    line = (TargetDataLine) AudioSystem.getLine(info);
-                    System.out.println("Recording...");
-                    line.open(format);
-                    line.start();
-                } catch (LineUnavailableException e1) {
-                    e1.printStackTrace();
-                }
-
-                Thread stopper = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AudioInputStream stream = new AudioInputStream(line);
-                        File file = new File("group_42\\test.wav");
-                        try {
-                            AudioSystem.write(stream, AudioFileFormat.Type.WAVE, file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            if (recordFlag) {
+                if (bRecord == false) {
+                    bRecord = true;
+                    try {
+                        Image img = ImageIO.read(getClass().getResource("/2.png"));
+                        btnVN.setIcon(new ImageIcon(img));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
                     }
-                });
-                stopper.start();
-                typedText.requestFocusInWindow();
+                    // record audio using sound API
+                    AudioFormat format = new AudioFormat(8000, 8, 1, true, true);
+                    DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
-            } else {
-                // set boolean false
-                bRecord = false;
-                try {
-                    Image img = ImageIO.read(getClass().getResource("rec.png"));
-                    btnVN.setIcon(new ImageIcon(img));
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    try {
+                        line = (TargetDataLine) AudioSystem.getLine(info);
+                        System.out.println("Recording...");
+                        line.open(format);
+                        line.start();
+                    } catch (LineUnavailableException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    Thread stopper = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AudioInputStream stream = new AudioInputStream(line);
+                            File file = new File("test.wav");
+                            try {
+                                AudioSystem.write(stream, AudioFileFormat.Type.WAVE, file);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    stopper.start();
+                    typedText.requestFocusInWindow();
+
+                } else {
+                    // set boolean false
+                    bRecord = false;
+                    try {
+                        Image img = ImageIO.read(getClass().getResource("rec.png"));
+                        btnVN.setIcon(new ImageIcon(img));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    System.out.println("Stopped");
+                    line.stop();
+                    line.close();
+                    sendMessage("/vn");
+
+                    // try {
+                    // sendFile("group_42\\test.wav");
+                    // } catch (IOException e1) {
+                    // e1.printStackTrace();
+                    // }
                 }
-                System.out.println("Stopped");
-                line.stop();
-                line.close();
-                sendMessage("/vn");
+            } else {
+                // simulated recording
 
-                // try {
-                // sendFile("group_42\\test.wav");
-                // } catch (IOException e1) {
-                // e1.printStackTrace();
-                // }
+                sendMessage("/vn");
             }
         }
         typedText.requestFocusInWindow();
@@ -194,7 +203,8 @@ public class Client implements ActionListener {
             Message msg = null;
             if (text.startsWith("/vn")) {
                 System.out.println("Sending voice note");
-                msg = new Message("/vn" + voiceFileString(), "m");
+                msg = new Message("/vn " + voiceFileString(), username);
+
             } else {
                 if (text.startsWith("/exit")) {
                     closeEverything();
@@ -202,10 +212,14 @@ public class Client implements ActionListener {
                     msg = new Message(text, username);
                 }
             }
+            // System.out.println("Sending message: " + msg.text());
+            // System.out.println(msg.text().startsWith("/vn"));
             oos.writeObject(msg);
             oos.flush();
         } catch (IOException e) {
-            closeEverything();
+
+            System.out.println("Error sending message: " + e.getMessage());
+
         }
     }
 
@@ -213,7 +227,7 @@ public class Client implements ActionListener {
         byte[] byteData;
         String encodedString = null;
         try {
-            byteData = Files.readAllBytes(Paths.get("group_42\\test.wav"));
+            byteData = Files.readAllBytes(Paths.get("test.wav"));
             encodedString = Base64.getEncoder().encodeToString(byteData);
         } catch (IOException e) {
             System.out.println("Error reading file");

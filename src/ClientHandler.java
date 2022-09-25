@@ -165,8 +165,15 @@ public class ClientHandler implements Runnable {
                     return;
                 }
                 break;
+
+            // case "/listen":
+            // msg.setText("/listen ");
+            // System.out.println("listening");
+            // broadcastRoom(msg);
+            // break;
+
             default:
-                broadcastRoom(new Message(text, username));
+                broadcastRoom(msg);
                 break;
         }
     }
