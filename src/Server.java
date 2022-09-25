@@ -1,50 +1,51 @@
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 
-
-/** 
- * Class for Server 
+/**
+ * Class for Server
  * 
  * Compiling in terminal: javac Server.java
- * Usage in terminal:     java Server <port_number>
+ * Usage in terminal: java Server <port_number>
  */
 public class Server {
 
     private ServerSocket serverSocket;
 
-
-    /** 
+    /**
      * Constructor for ServerSocket
+     * 
      * @param serverSocket assign the socket to this instance of server
      */
-    public Server(ServerSocket serverSocket){
+    public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
-
-    /** 
+    /**
      * The method that creates threads for handling each client
      */
     public void startServer() {
         try {
-            while (!serverSocket.isClosed()){
+            while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                
+
                 ClientHandler clientHandler = new ClientHandler(socket);
                 // clientHandler.checkUsername();
                 System.out.println("New Client Connected!");
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
+
+                // create thread to listen for incoming files to receive
+
             }
+
         } catch (IOException e) {
             closeServerSocket();
         }
+
     }
 
-
-    /** 
+    /**
      * Method that closes server socket
      */
     public void closeServerSocket() {
@@ -56,10 +57,10 @@ public class Server {
             e.printStackTrace();
         }
     }
-    
-    
-    /** 
+
+    /**
      * Checks for valid port number
+     * 
      * @param args should only contain port number
      * @throws IOException regarding serverSocket creation
      */

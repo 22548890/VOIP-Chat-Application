@@ -1,10 +1,8 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-/** 
+/**
  * Threads that handle each client
  */
 public class ClientHandler implements Runnable {
@@ -17,14 +15,15 @@ public class ClientHandler implements Runnable {
     private String username;
     private String room;
 
-    /** 
+    /**
      * Constructor for this handler
+     * 
      * @param socket Is the socket that the client connects to
      */
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
-           
+
             this.oos = new ObjectOutputStream(socket.getOutputStream());
             this.ois = new ObjectInputStream(socket.getInputStream());
 
@@ -34,21 +33,21 @@ public class ClientHandler implements Runnable {
                 rooms.add(room);
             }
 
-            // this.username = ((Message) objectInputStream.readObject()).text();//waits for message to be sent
-        
-        } catch (IOException e){
+            // this.username = ((Message) objectInputStream.readObject()).text();//waits for
+            // message to be sent
+
+        } catch (IOException e) {
             closeEverything();
-        } 
+        }
     }
 
-
-    /** 
+    /**
      * The thread listens for messages from the client and handles it
      */
     @Override
     public void run() {
         // run on every thread
-        //thread waiting and sending for each message
+        // thread waiting and sending for each message
         Message msg;
 
         // check username uniqueness
@@ -80,13 +79,13 @@ public class ClientHandler implements Runnable {
                     usernames.add(handler.username);
                 }
             }
-            try{ 
+            try {
                 oos.writeObject(usernames);
-                oos.flush();//manual clear before it fills  
+                oos.flush();// manual clear before it fills
 
                 oos.writeObject(rooms);
                 oos.flush();
-            } catch (IOException e){
+            } catch (IOException e) {
                 closeEverything();
                 return;
             }
@@ -94,9 +93,8 @@ public class ClientHandler implements Runnable {
             broadcastRoom(new Message(username + " has entered the chat!", "SERVER"));
         }
 
-
         while (socket.isConnected()) {
-            try{
+            try {
                 msg = (Message) ois.readObject();
                 if (msg.text().startsWith("@")) {
                     whisper(msg);
@@ -105,11 +103,17 @@ public class ClientHandler implements Runnable {
                 } else {
                     broadcastRoom(msg);
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 closeEverything();
+                System.out.println("error 1");
                 return;
             }
         }
+    }
+
+    private void receiveFile(String filePath) throws FileNotFoundException {
+        // receive file test.wav from server
+
     }
 
     public void serverMessage(Message msg) {
@@ -143,16 +147,16 @@ public class ClientHandler implements Runnable {
                             usernames.add(handler.username);
                         }
                     }
-                    try{ 
+                    try {
                         oos.writeObject(usernames);
-                        oos.flush();//manual clear before it fills  
-                    } catch (IOException e){
+                        oos.flush();// manual clear before it fills
+                    } catch (IOException e) {
                         closeEverything();
                         return;
                     }
                     return;
                 }
-            
+
                 try {
                     oos.writeObject(new Message("Room " + text + " does not exist", "SERVER"));
                     oos.flush();
@@ -170,10 +174,10 @@ public class ClientHandler implements Runnable {
     public void broadcastRoom(Message msg) {
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler.room.equals(room)) {
-                try{ 
+                try {
                     clientHandler.oos.writeObject(msg);
-                    clientHandler.oos.flush();//manual clear before it fills   
-                } catch (IOException e){
+                    clientHandler.oos.flush();// manual clear before it fills
+                } catch (IOException e) {
                     closeEverything();
                 }
             }
@@ -182,17 +186,18 @@ public class ClientHandler implements Runnable {
 
     public void broadcast(Message msg) {
         for (ClientHandler clientHandler : clientHandlers) {
-            try{ 
+            try {
                 clientHandler.oos.writeObject(msg);
-                clientHandler.oos.flush();//manual clear before it fills   
-            } catch (IOException e){
+                clientHandler.oos.flush();// manual clear before it fills
+            } catch (IOException e) {
                 closeEverything();
             }
         }
     }
-  
-    /** 
-     * Send messages with and handles some exceptions 
+
+    /**
+     * Send messages with and handles some exceptions
+     * 
      * @param msg the object to send to clients
      */
     public void whisper(Message msg) {
@@ -222,7 +227,7 @@ public class ClientHandler implements Runnable {
         if (usernames.size() > handlers.size()) {
             try {
                 oos.writeObject(new Message(errTxt, "SERVER"));
-                oos.flush();  
+                oos.flush();
             } catch (IOException e) {
                 closeEverything();
                 return;
@@ -241,10 +246,10 @@ public class ClientHandler implements Runnable {
                 closeEverything();
                 return;
             }
-        }     
+        }
     }
 
-    /** 
+    /**
      * Neatly closes sockets and input output streams
      */
     public void closeEverything() {
@@ -259,17 +264,18 @@ public class ClientHandler implements Runnable {
             if (socket != null) {
                 socket.close();
             }
-        } catch (IOException e){}
+        } catch (IOException e) {
+
+        }
     }
 
-    /** 
+    /**
      * Remove client and send messages
      */
     public void removeClientHandler() {
         clientHandlers.remove(this);
-        broadcastRoom(new Message(username + " has left the chat!","SERVER"));
+        broadcastRoom(new Message(username + " has left the chat!", "SERVER"));
         System.out.println("Client Disconnected!");
     }
 
 }
-
