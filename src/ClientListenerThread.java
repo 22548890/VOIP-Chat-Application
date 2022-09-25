@@ -66,9 +66,7 @@ public class ClientListenerThread implements Runnable {
             try {
                 printMessage((Message) ois.readObject());
             } catch (Exception e) {
-                System.out.println("error 2");
                 closeEverything();
-
             }
         }
     }
@@ -106,27 +104,38 @@ public class ClientListenerThread implements Runnable {
             } else if (message.text().startsWith("Room created - ")) {
                 listModelRooms.addElement(message.text().split(" - ", 2)[1]);
             }
-        } else if (message.text().startsWith("/vn")) {
+        }
+        if (message.text().startsWith("/vn")) {
             String encodedString = message.text().substring(4);
             byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
             try {
-
-                Files.write(Paths.get("rec.wav"), decodedBytes);
+                // writing file after being sent
+                Files.write(Paths.get("received.wav"), decodedBytes);
             } catch (IOException e) {
                 System.out.println("Error writing file");
             }
             // set message to voice note received
             // msg = "Voice note received - type /listen to listen";
-            message.setText("Voice note received - type /listen to listen");
+            enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
         } else if (message.text().startsWith("/listen")) {
             // play sound file java sound api
-            File voiceNoteFile = new File("rec.wav");
+            File voiceNoteFile = new File("received.wav");
+            msg = username;
+            message.setText("Playing voice note...");
+            msg += ": " + message.text();
+            System.out.println(msg);
+            enteredText.insert(msg + "\n", enteredText.getText().length());
             playSound(voiceNoteFile);
-            message.setText("Voice note played");
+            message.setText("Played voice note.");
+            msg = message.text();
+            System.out.println(msg);
+            enteredText.insert(msg, enteredText.getText().length());
+            enteredText.insert("\n", enteredText.getText().length());
+        } else {
+            msg += ": " + message.text();
+            System.out.println(msg);
+            enteredText.insert(msg + "\n", enteredText.getText().length());
         }
-        msg += ": " + message.text();
-        System.out.println(msg);
-        enteredText.insert(msg + "\n", enteredText.getText().length());
     }
 
     private void playSound(File voiceNoteFile) {
@@ -173,6 +182,6 @@ public class ClientListenerThread implements Runnable {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
         }
-        // System.exit(0);
+        System.exit(0);
     }
 }

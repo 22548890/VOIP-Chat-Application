@@ -2,6 +2,9 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JTextArea;
+
 /**
  * Threads that handle each client
  */
@@ -14,23 +17,34 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream oos;
     private String username;
     private String room;
+    private JTextArea enteredText;
+    private DefaultListModel<String> listModelUsers;
+    private DefaultListModel<String> listModelRooms;
 
     /**
      * Constructor for this handler
      * 
-     * @param socket Is the socket that the client connects to
+     * @param socket         Is the socket that the client connects to
+     * @param listModelRooms
+     * @param listModelUsers
+     * @param enteredText
      */
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, JTextArea enteredText, DefaultListModel<String> listModelUsers,
+            DefaultListModel<String> listModelRooms) {
         try {
             this.socket = socket;
 
             this.oos = new ObjectOutputStream(socket.getOutputStream());
             this.ois = new ObjectInputStream(socket.getInputStream());
-
             this.room = "General";
+            this.enteredText = enteredText;
+            this.listModelUsers = listModelUsers;
+            this.listModelRooms = listModelRooms;
 
             if (rooms.size() == 0) {
                 rooms.add(room);
+                // add to list roomsList
+                listModelRooms.addElement(room);
             }
 
             // this.username = ((Message) objectInputStream.readObject()).text();//waits for
@@ -62,6 +76,8 @@ public class ClientHandler implements Runnable {
                     }
                 }
                 this.username = username;
+                // add to list of users
+                listModelUsers.addElement(username);
                 oos.writeObject(new String("username unique"));
                 oos.flush();
                 break;
@@ -105,15 +121,9 @@ public class ClientHandler implements Runnable {
                 }
             } catch (Exception e) {
                 closeEverything();
-                System.out.println("error 1");
                 return;
             }
         }
-    }
-
-    private void receiveFile(String filePath) throws FileNotFoundException {
-        // receive file test.wav from server
-
     }
 
     public void serverMessage(Message msg) {
@@ -133,6 +143,7 @@ public class ClientHandler implements Runnable {
                     }
                 }
                 rooms.add(text);
+                listModelRooms.addElement(text);
                 broadcast(new Message("Room created - " + text, "SERVER"));
                 break;
 
@@ -281,8 +292,12 @@ public class ClientHandler implements Runnable {
      */
     public void removeClientHandler() {
         clientHandlers.remove(this);
+        // list of users remove usernames from list
+        listModelUsers.removeElement(username);
         broadcastRoom(new Message(username + " has left the chat!", "SERVER"));
         System.out.println("Client Disconnected!");
+        enteredText.insert("Client " + username + " Disconnected!\n", enteredText.getText().length());
+
     }
 
 }

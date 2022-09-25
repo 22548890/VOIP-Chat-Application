@@ -1,5 +1,14 @@
 import java.io.*;
+import java.net.DatagramPacket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.net.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
+import javax.swing.*;
 
 /**
  * Class for Server
@@ -10,6 +19,14 @@ import java.net.*;
 public class Server {
 
     private ServerSocket serverSocket;
+    private String username;
+    private JFrame frame;
+    private JTextArea enteredText;
+    private JTextField typedText;
+    private DefaultListModel<String> listModelUsers;
+    private JList<String> usersList;
+    private DefaultListModel<String> listModelRooms;
+    private JList<String> roomsList;
 
     /**
      * Constructor for ServerSocket
@@ -18,6 +35,52 @@ public class Server {
      */
     public Server(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
+
+        frame = new JFrame();
+
+        // create button with image record.png
+        enteredText = new JTextArea(10, 32);
+        typedText = new JTextField(32);
+
+        listModelUsers = new DefaultListModel<String>();
+        // set background color of list
+        listModelUsers.addElement("Online Users:");
+        listModelRooms = new DefaultListModel<String>();
+        listModelRooms.addElement("Rooms:   ");
+
+        usersList = new JList<String>(listModelUsers);
+        roomsList = new JList<String>(listModelRooms);
+
+        enteredText.setEditable(false);
+        usersList.setEnabled(false);
+        roomsList.setEnabled(false);
+        // set text Color
+        enteredText.setForeground(Color.WHITE);
+        enteredText.setBackground(Color.BLACK);
+        usersList.setForeground(Color.WHITE);
+        usersList.setBackground(Color.BLACK);
+        roomsList.setForeground(Color.WHITE);
+        roomsList.setBackground(Color.BLACK);
+        typedText.setForeground(Color.WHITE);
+        typedText.setBackground(Color.BLACK);
+
+        Container content = frame.getContentPane();
+        content.setBackground(Color.BLACK);
+        content.setForeground(Color.BLACK);
+        content.add(new JScrollPane(enteredText), BorderLayout.CENTER);
+        // content.add(typedText, BorderLayout.SOUTH);
+        // add button next to typedText
+        content.add(usersList, BorderLayout.EAST);
+        content.add(roomsList, BorderLayout.WEST);
+        enteredText.setPreferredSize(new Dimension(300, 50));
+
+        content.add(typedText, BorderLayout.SOUTH);
+        // frame.add(button, BorderLayout.SOUTH);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setTitle("SERVER");
+        typedText.requestFocusInWindow();
     }
 
     /**
@@ -28,10 +91,13 @@ public class Server {
             while (!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
 
-                ClientHandler clientHandler = new ClientHandler(socket);
+                ClientHandler clientHandler = new ClientHandler(socket, enteredText, listModelUsers,
+                        listModelRooms);
                 // clientHandler.checkUsername();
                 System.out.println("New Client Connected!");
-
+                enteredText.insert(
+                        "New Client Connected!\n",
+                        enteredText.getText().length());
                 Thread thread = new Thread(clientHandler);
                 thread.start();
 

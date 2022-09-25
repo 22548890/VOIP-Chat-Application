@@ -27,7 +27,7 @@ public class Client implements ActionListener {
     private JList<String> roomsList;
     private static TargetDataLine line = null;
     private boolean bRecord = false;
-    final boolean recordFlag = false;
+    final boolean recordFlag = true;
 
     /**
      * Performs actions regarding the GUI
@@ -37,31 +37,24 @@ public class Client implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // get and send text from typedText.getText()
-        if (e.getSource() == btnSend) {
-            msg = typedText.getText();
-            if (msg.equals("/listen")) {
-                msg += " ";
-            }
-            sendMessage(msg);
-            typedText.setText("");
-
-        } else {
+        if (e.getSource() == btnVN) {
             if (recordFlag) {
                 if (bRecord == false) {
                     bRecord = true;
                     try {
-                        Image img = ImageIO.read(getClass().getResource("/2.png"));
+                        Image img = ImageIO.read(getClass().getResource("/icons/2.png"));
                         btnVN.setIcon(new ImageIcon(img));
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                     // record audio using sound API
-                    AudioFormat format = new AudioFormat(8000, 8, 1, true, true);
+                    AudioFormat format = new AudioFormat(22050, 16, 2, true, true);
                     DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
                     try {
                         line = (TargetDataLine) AudioSystem.getLine(info);
-                        System.out.println("Recording...");
+                        // System.out.println("Recording...");
+                        enteredText.insert("Recording...", enteredText.getText().length());
                         line.open(format);
                         line.start();
                     } catch (LineUnavailableException e1) {
@@ -72,11 +65,12 @@ public class Client implements ActionListener {
                         @Override
                         public void run() {
                             AudioInputStream stream = new AudioInputStream(line);
-                            File file = new File("test.wav");
+                            File file = new File("sent.wav");
                             try {
                                 AudioSystem.write(stream, AudioFileFormat.Type.WAVE, file);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(
+                                        "File path not found: " + file.getAbsolutePath() + " - " + e.getMessage());
                             }
                         }
                     });
@@ -87,33 +81,30 @@ public class Client implements ActionListener {
                     // set boolean false
                     bRecord = false;
                     try {
-                        Image img = ImageIO.read(getClass().getResource("rec.png"));
+                        Image img = ImageIO.read(getClass().getResource("/icons/rec.png"));
                         btnVN.setIcon(new ImageIcon(img));
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
-                    System.out.println("Stopped");
+                    enteredText.insert("Recording stopped.\n", enteredText.getText().length());
                     line.stop();
                     line.close();
                     sendMessage("/vn");
-
-                    // try {
-                    // sendFile("group_42\\test.wav");
-                    // } catch (IOException e1) {
-                    // e1.printStackTrace();
-                    // }
                 }
             } else {
-                // simulated recording
-
+                // simulated recording for testing without microphone
                 sendMessage("/vn");
             }
+        } else {
+            msg = typedText.getText();
+            if (msg.equals("/listen")) {
+                msg += " ";
+            }
+            sendMessage(msg);
+            typedText.setText("");
+
         }
         typedText.requestFocusInWindow();
-
-    }
-
-    private void sendFile(String filePath) throws IOException {
 
     }
 
@@ -134,14 +125,14 @@ public class Client implements ActionListener {
         btnVN = new JButton();
         btnVN.addActionListener(this);
         try {
-            Image img = ImageIO.read(getClass().getResource("rec.png"));
+            Image img = ImageIO.read(getClass().getResource("/icons/rec.png"));
             btnVN.setIcon(new ImageIcon(img));
         } catch (Exception ex) {
             System.out.println(ex);
         }
         btnSend = new JButton();
         try {
-            Image img = ImageIO.read(getClass().getResource("/send.png"));
+            Image img = ImageIO.read(getClass().getResource("/icons/send.png"));
             btnSend.setIcon(new ImageIcon(img));
         } catch (Exception ex) {
             System.out.println(ex);
@@ -189,8 +180,8 @@ public class Client implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
         frame.setTitle("Client: " + username);
+        typedText.requestFocusInWindow();
     }
 
     /**
@@ -202,7 +193,7 @@ public class Client implements ActionListener {
         try {
             Message msg = null;
             if (text.startsWith("/vn")) {
-                System.out.println("Sending voice note");
+                // System.out.println("Sending voice note");
                 msg = new Message("/vn " + voiceFileString(), username);
 
             } else {
@@ -227,10 +218,10 @@ public class Client implements ActionListener {
         byte[] byteData;
         String encodedString = null;
         try {
-            byteData = Files.readAllBytes(Paths.get("test.wav"));
+            byteData = Files.readAllBytes(Paths.get("sent.wav"));
             encodedString = Base64.getEncoder().encodeToString(byteData);
         } catch (IOException e) {
-            System.out.println("Error reading file");
+            System.out.println("Error reading file" + e.getMessage());
         }
 
         // print size of encoded string in bytes
