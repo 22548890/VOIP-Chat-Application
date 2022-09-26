@@ -196,12 +196,20 @@ public class Client implements ActionListener {
                 // System.out.println("Sending voice note");
                 msg = new Message("/vn " + voiceFileString(), username);
 
-            } else {
-                if (text.startsWith("/exit")) {
-                    closeEverything();
-                } else {
-                    msg = new Message(text, username);
-                }
+            } else if (text.startsWith("/exit")) {
+                closeEverything();
+            } else if (text.startsWith("/call")) {
+                CallerThread caller = new CallerThread();
+                Thread thread = new Thread(caller);
+                thread.start();
+                return;
+            } else if (text.startsWith("/answer")) {
+                ReceiverThread receiver = new ReceiverThread();
+                Thread thread = new Thread(receiver);
+                thread.start();
+                return;
+            }else {
+                msg = new Message(text, username);
             }
             // System.out.println("Sending message: " + msg.text());
             // System.out.println(msg.text().startsWith("/vn"));
