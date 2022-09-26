@@ -162,7 +162,7 @@ public class ClientHandler implements Runnable {
                 }
                 break;
             default:
-                broadcastRoom(new Message(text, username));
+                broadcastRoom(msg);
                 break;
         }
     }
