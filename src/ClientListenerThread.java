@@ -119,8 +119,7 @@ public class ClientListenerThread implements Runnable {
             // set message to voice note received
             // msg = "Voice note received - type /listen to listen";
             enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
-        } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to")
-                && !message.from().equals(username)) {
+        } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to") && !message.from().equals(username)) {
             int result = JOptionPane.showConfirmDialog((Component) null, "Incoming call from " + message.from(),
                     "alert", JOptionPane.OK_CANCEL_OPTION);
             if (result == 0) {
