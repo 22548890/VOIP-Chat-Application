@@ -10,6 +10,7 @@ public class ReceiverThread implements Runnable {
 
     static DataLine.Info dataLineInfo;
     static SourceDataLine sourceDataLine;
+    static boolean bEnd = false;
 
     @Override
     public void run() {
@@ -18,9 +19,9 @@ public class ReceiverThread implements Runnable {
         try {
             DatagramSocket socket = new DatagramSocket(port);
 
-            byte[] data = new byte[512];
+            byte[] data = new byte[508];
 
-            format = new AudioFormat(44100, 16, 2, true, true);
+            format = new AudioFormat(8000, 16, 2, true, true);
 
             dataLineInfo = new DataLine.Info(TargetDataLine.class, format);
 
@@ -31,19 +32,21 @@ public class ReceiverThread implements Runnable {
             DatagramPacket packet = new DatagramPacket(data, data.length);
             ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
 
-            while (Client.endCall() != true) {
+            while (Client.endCall() != true || bEnd != true) {
                 socket.receive(packet);
                 ais = new AudioInputStream(bais, format, packet.getLength());
-
                 System.out.println("Listening ...");
                 sourceDataLine.write(packet.getData(), 0, packet.getData().length);
             }
             // call ended
+            CallerThread.bEnd = true;
             System.out.println("Call ended");
-            sourceDataLine.drain();
+            sourceDataLine.flush();
             sourceDataLine.close();
-            socket.close();
             ais.close();
+            socket.close();
+            bEnd = false;
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
