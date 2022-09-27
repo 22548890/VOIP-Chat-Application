@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
@@ -117,20 +118,17 @@ public class ClientListenerThread implements Runnable {
             // set message to voice note received
             // msg = "Voice note received - type /listen to listen";
             enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
-        } else if (message.text().startsWith("/listen")) {
-            // play sound file java sound api
-            File voiceNoteFile = new File("received.wav");
-            msg = username;
-            message.setText("Playing voice note...");
-            msg += ": " + message.text();
-            System.out.println(msg);
-            enteredText.insert(msg + "\n", enteredText.getText().length());
-            playSound(voiceNoteFile);
-            message.setText("Played voice note.");
-            msg = message.text();
-            System.out.println(msg);
-            enteredText.insert(msg, enteredText.getText().length());
-            enteredText.insert("\n", enteredText.getText().length());
+        } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to") && !message.from().equals(username)) {
+            int result = JOptionPane.showConfirmDialog((Component) null, "Incoming call from " + message.from(), "alert", JOptionPane.OK_CANCEL_OPTION);
+            if (result == 0) {
+                String ip = "";
+                while (ip.isBlank()) {
+                    ip = JOptionPane.showInputDialog("Enter the callee IP address: ");
+                }
+                CallerThread caller = new CallerThread(ip);
+                Thread thread = new Thread(caller);
+                thread.start();
+            }
         } else {
             msg += ": " + message.text();
             System.out.println(msg);

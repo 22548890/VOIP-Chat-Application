@@ -5,6 +5,7 @@ import java.io.Serializable;
  */
 public class Message implements Serializable {
     private String text, from;
+    boolean call;
 
     /**
      * Constructor for broadcast
@@ -15,6 +16,19 @@ public class Message implements Serializable {
     public Message(String text, String from) {
         this.text = text;
         this.from = from;
+        this.call = false;
+    }
+
+    /**
+     * Constructor for broadcast
+     * 
+     * @param text The actual text to send
+     * @param from Where it is sent from
+     */
+    public Message(String text, String from, boolean call) {
+        this.text = text;
+        this.from = from;
+        this.call = call;
     }
 
     /**

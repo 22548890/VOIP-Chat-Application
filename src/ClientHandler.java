@@ -228,7 +228,7 @@ public class ClientHandler implements Runnable {
         }
 
         // send to users an
-        String txt = " whispers to";
+        String txt = "whispers to";
         String errTxt = " the following users do not exist: ";
         ArrayList<ClientHandler> handlers = new ArrayList<ClientHandler>();
         outer: for (String name : usernames) {

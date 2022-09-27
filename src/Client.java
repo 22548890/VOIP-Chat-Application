@@ -1,5 +1,4 @@
 import java.io.*;
-import java.net.DatagramPacket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -192,23 +191,28 @@ public class Client implements ActionListener {
     public void sendMessage(String text) {
         try {
             Message msg = null;
-            if (text.startsWith("/vn")) {
-                // System.out.println("Sending voice note");
-                msg = new Message("/vn " + voiceFileString(), username);
-
-            } else if (text.startsWith("/exit")) {
-                closeEverything();
-            } else if (text.startsWith("/call")) {
-                CallerThread caller = new CallerThread();
+            if (text.startsWith("/")) {
+                if (text.startsWith("/vn")) {
+                    // System.out.println("Sending voice note");
+                    msg = new Message("/vn " + voiceFileString(), username);
+    
+                } else if (text.startsWith("/exit")) {
+                    closeEverything();
+                } else {
+                    enteredText.insert("SERVER: Incorrect command. /help for more", enteredText.getText().length());
+                    return;
+                }
+            } else if (text.endsWith("/call")) {
+                String ip = "";
+                while (ip.isBlank()) {
+                    ip = JOptionPane.showInputDialog("Enter the callee IP address: ");
+                }
+                CallerThread caller = new CallerThread(ip);
                 Thread thread = new Thread(caller);
                 thread.start();
-                return;
-            } else if (text.startsWith("/answer")) {
-                ReceiverThread receiver = new ReceiverThread();
-                Thread thread = new Thread(receiver);
-                thread.start();
-                return;
-            }else {
+
+                msg = new Message(text, username);
+            } else {
                 msg = new Message(text, username);
             }
             // System.out.println("Sending message: " + msg.text());
@@ -295,18 +299,18 @@ public class Client implements ActionListener {
         int port = 12345;
         Socket socket = null;
 
-        String ip = "";
-        while (ip.isBlank()) {
-            ip = JOptionPane.showInputDialog("Enter the IP address: ", "localhost");
+        String sip = "";
+        while (sip.isBlank()) {
+            sip = JOptionPane.showInputDialog("Enter the server IP address: ", "localhost");
         }
 
         try {
-            socket = new Socket(ip, port);
+            socket = new Socket(sip, port);
         } catch (UnknownHostException e) {
             System.out.println("ERROR: Unknown host");
             System.exit(0);
         } catch (IOException e) {
-            System.out.println("ERROR: Couldn't get the connection to " + ip);
+            System.out.println("ERROR: Couldn't get the connection to " + sip);
             System.exit(0);
         }
 

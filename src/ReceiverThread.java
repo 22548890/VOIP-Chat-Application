@@ -11,6 +11,7 @@ public class ReceiverThread implements Runnable {
     static DataLine.Info dataLineInfo;
     static SourceDataLine sourceDataLine;
 
+
     @Override
     public void run() {
         System.out.println("Receiving call ...");
@@ -19,9 +20,9 @@ public class ReceiverThread implements Runnable {
             InetAddress address = InetAddress.getByName("localhost");
             DatagramSocket socket = new DatagramSocket(port);
 
-            byte[] data = new byte[1024];
+            byte[] data = new byte[512];
 
-            format = new AudioFormat(22050, 16, 2, true, true);
+            format = new AudioFormat(44100, 16, 2, true, true);
 
             dataLineInfo = new DataLine.Info(TargetDataLine.class, format);
 
@@ -36,7 +37,7 @@ public class ReceiverThread implements Runnable {
                 socket.receive(packet);
                 ais = new AudioInputStream(bais, format, packet.getLength());
 
-                System.out.println("Listening ...");
+                // System.out.println("Listening ...");
                 sourceDataLine.write(packet.getData(), 0, packet.getData().length);
             }
         } catch (UnknownHostException e) {
