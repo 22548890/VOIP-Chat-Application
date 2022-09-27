@@ -195,7 +195,7 @@ public class Client implements ActionListener {
                 if (text.startsWith("/vn")) {
                     // System.out.println("Sending voice note");
                     msg = new Message("/vn " + voiceFileString(), username);
-    
+
                 } else if (text.startsWith("/exit")) {
                     closeEverything();
                 } else {

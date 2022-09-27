@@ -111,6 +111,7 @@ public class ClientListenerThread implements Runnable {
             byte[] decodedBytes = Base64.getDecoder().decode(encodedString);
             try {
                 // writing file after being sent
+
                 Files.write(Paths.get("received.wav"), decodedBytes);
             } catch (IOException e) {
                 System.out.println("Error writing file");
@@ -118,8 +119,10 @@ public class ClientListenerThread implements Runnable {
             // set message to voice note received
             // msg = "Voice note received - type /listen to listen";
             enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
-        } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to") && !message.from().equals(username)) {
-            int result = JOptionPane.showConfirmDialog((Component) null, "Incoming call from " + message.from(), "alert", JOptionPane.OK_CANCEL_OPTION);
+        } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to")
+                && !message.from().equals(username)) {
+            int result = JOptionPane.showConfirmDialog((Component) null, "Incoming call from " + message.from(),
+                    "alert", JOptionPane.OK_CANCEL_OPTION);
             if (result == 0) {
                 String ip = "";
                 while (ip.isBlank()) {

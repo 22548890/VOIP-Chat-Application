@@ -16,7 +16,6 @@ public class ReceiverThread implements Runnable {
         System.out.println("Receiving call ...");
 
         try {
-            InetAddress address = InetAddress.getByName("localhost");
             DatagramSocket socket = new DatagramSocket(port);
 
             byte[] data = new byte[512];
