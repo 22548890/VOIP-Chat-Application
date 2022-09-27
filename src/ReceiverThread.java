@@ -11,7 +11,6 @@ public class ReceiverThread implements Runnable {
     static DataLine.Info dataLineInfo;
     static SourceDataLine sourceDataLine;
 
-
     @Override
     public void run() {
         System.out.println("Receiving call ...");
@@ -37,7 +36,7 @@ public class ReceiverThread implements Runnable {
                 socket.receive(packet);
                 ais = new AudioInputStream(bais, format, packet.getLength());
 
-                // System.out.println("Listening ...");
+                System.out.println("Listening ...");
                 sourceDataLine.write(packet.getData(), 0, packet.getData().length);
             }
             // call ended
@@ -45,6 +44,7 @@ public class ReceiverThread implements Runnable {
             sourceDataLine.drain();
             sourceDataLine.close();
             socket.close();
+            ais.close();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
