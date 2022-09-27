@@ -221,8 +221,10 @@ public class Client implements ActionListener {
                         enteredText.insert("No voice note received to listen to.\n", enteredText.getText().length());
                     }
                     return;
+                } else if(text.startsWith("/create") || text.startsWith("/join")) {
+                    // ignore and send to server
                 } else {
-                    enteredText.insert("SERVER: Incorrect command. /help for more", enteredText.getText().length());
+                    enteredText.insert("SERVER: Incorrect command. /help for more\n", enteredText.getText().length());
                     return;
                 }
             } else if (text.endsWith("/call")) {
