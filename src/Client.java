@@ -47,7 +47,7 @@ public class Client implements ActionListener {
                         e1.printStackTrace();
                     }
                     // record audio using sound API
-                    AudioFormat format = new AudioFormat(44100, 16, 2, true, true);
+                    AudioFormat format = new AudioFormat(8000, 16, 2, true, true);
                     DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
                     try {
@@ -198,31 +198,32 @@ public class Client implements ActionListener {
 
                 } else if (text.startsWith("/exit")) {
                     closeEverything();
+                } else if (text.startsWith("/help")) {
+                    // help cmds
+                    enteredText.insert(
+                            "Commands: \n- /call <ip>\n- /answer - accept incoming call\n- /exit - shut down application\n- /listen - listen to voice note\n- /leave - to leave call\n- /create <name> - create room\n- /join <room> - join that room\n- /help - show help\n",
+                            enteredText.getText().length());
+                    return;
+                } else if (text.startsWith("/listen")) {
+                    // play sound file java sound api
+                    // check if file exists
+                    File voiceNoteFile = new File("received.wav");
+                    if (voiceNoteFile.exists()) {
+                        try {
+                            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(voiceNoteFile);
+                            Clip clip = AudioSystem.getClip();
+                            clip.open(audioInputStream);
+                            clip.start();
+                        } catch (Exception e) {
+                            System.out.println("Error with playing sound." + e.getMessage());
+                        }
+                    } else {
+                        enteredText.insert("No voice note received to listen to.\n", enteredText.getText().length());
+                    }
+                    return;
                 } else {
                     enteredText.insert("SERVER: Incorrect command. /help for more", enteredText.getText().length());
                     return;
-                }
-            } else if (text.startsWith("/help")) {
-                // help cmds
-                enteredText.insert(
-                        "Commands: \n- /call <ip>\n- /answer - accept incoming call\n- /exit - shut down application\n- /listen - listen to voice note\n- /leave - to leave call\n- /create <name> - create room\n- /join <room> - join that room\n- /help - show help\n",
-                        enteredText.getText().length());
-                return;
-            } else if (text.startsWith("/listen")) {
-                // play sound file java sound api
-                // check if file exists
-                File voiceNoteFile = new File("received.wav");
-                if (voiceNoteFile.exists()) {
-                    try {
-                        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(voiceNoteFile);
-                        Clip clip = AudioSystem.getClip();
-                        clip.open(audioInputStream);
-                        clip.start();
-                    } catch (Exception e) {
-                        System.out.println("Error with playing sound." + e.getMessage());
-                    }
-                } else {
-                    enteredText.insert("No voice note received to listen to.\n", enteredText.getText().length());
                 }
             } else if (text.endsWith("/call")) {
                 String ip = "";

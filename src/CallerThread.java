@@ -13,6 +13,7 @@ public class CallerThread implements Runnable {
 
     @Override
     public void run() {
+        bEnd = false;
 
         TargetDataLine line;
         DatagramPacket packet;
@@ -46,7 +47,6 @@ public class CallerThread implements Runnable {
             line.flush();
             line.close();
             socket.close();
-            bEnd = false;
             // terminate thread
             Thread.currentThread().interrupt();
 

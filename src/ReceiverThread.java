@@ -14,6 +14,7 @@ public class ReceiverThread implements Runnable {
 
     @Override
     public void run() {
+        bEnd = false;
         System.out.println("Receiving call ...");
 
         try {
@@ -45,7 +46,6 @@ public class ReceiverThread implements Runnable {
             sourceDataLine.close();
             ais.close();
             socket.close();
-            bEnd = false;
             Thread.currentThread().interrupt();
 
         } catch (UnknownHostException e) {

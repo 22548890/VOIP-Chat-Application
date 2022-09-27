@@ -140,19 +140,7 @@ public class ClientListenerThread implements Runnable {
             enteredText.insert(msg + "\n", enteredText.getText().length());
         }
     }
-
-    // private void playSound(File voiceNoteFile) {
-    // try {
-    // AudioInputStream audioInputStream =
-    // AudioSystem.getAudioInputStream(voiceNoteFile);
-    // Clip clip = AudioSystem.getClip();
-    // clip.open(audioInputStream);
-    // clip.start();
-    // // Thread.sleep(clip.getMicrosecondLength() / 1000);
-    // } catch (Exception e) {
-    // System.out.println("Error playing sound: " + e.getMessage());
-    // }
-    // }
+    
 
     /**
      * Closes socket and streams neatly and exits
