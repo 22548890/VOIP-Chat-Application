@@ -19,7 +19,7 @@ public class ReceiverThread implements Runnable {
         try {
             DatagramSocket socket = new DatagramSocket(port);
 
-            byte[] data = new byte[24];
+            byte[] data = new byte[508];
 
             format = new AudioFormat(8000, 16, 2, true, true);
 

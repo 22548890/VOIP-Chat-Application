@@ -20,7 +20,7 @@ public class CallerThread implements Runnable {
         InetAddress address;
         int port = 43215;
 
-        AudioFormat format = new AudioFormat(44100, 16, 2, true, true);
+        AudioFormat format = new AudioFormat(8000, 16, 2, true, true);
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
 
         try {
@@ -29,7 +29,7 @@ public class CallerThread implements Runnable {
             line.open(format);
             line.start();
 
-            byte[] data = new byte[24];
+            byte[] data = new byte[508];
 
             address = InetAddress.getByName(calleeIP);
             // address = InetAddress.getByName("25.86.115.11");
