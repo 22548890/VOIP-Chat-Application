@@ -128,6 +128,10 @@ public class ClientListenerThread implements Runnable {
                 CallerThread caller = new CallerThread(ip);
                 Thread thread = new Thread(caller);
                 thread.start();
+
+                ReceiverThread receiver = new ReceiverThread();
+                Thread rthread = new Thread(receiver);
+                rthread.start();
             }
         } else {
             msg += ": " + message.text();

@@ -233,6 +233,10 @@ public class Client implements ActionListener {
                 Thread thread = new Thread(caller);
                 thread.start();
 
+                ReceiverThread receiver = new ReceiverThread();
+                Thread rthread = new Thread(receiver);
+                rthread.start();
+
                 msg = new Message(text, username);
             } else {
                 msg = new Message(text, username);

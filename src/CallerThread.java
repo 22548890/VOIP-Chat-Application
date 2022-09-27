@@ -13,10 +13,6 @@ public class CallerThread implements Runnable {
     @Override
     public void run() {
 
-        ReceiverThread receiver = new ReceiverThread();
-        Thread thread = new Thread(receiver);
-        thread.start();
-
         TargetDataLine line;
         DatagramPacket packet;
 
