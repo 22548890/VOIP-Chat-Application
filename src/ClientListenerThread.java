@@ -3,7 +3,6 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import javax.sound.sampled.*;
 import javax.swing.*;
 
 /**
@@ -123,17 +122,18 @@ public class ClientListenerThread implements Runnable {
         }
     }
 
-    private void playSound(File voiceNoteFile) {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(voiceNoteFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-            // Thread.sleep(clip.getMicrosecondLength() / 1000);
-        } catch (Exception e) {
-            System.out.println("Error playing sound: " + e.getMessage());
-        }
-    }
+    // private void playSound(File voiceNoteFile) {
+    // try {
+    // AudioInputStream audioInputStream =
+    // AudioSystem.getAudioInputStream(voiceNoteFile);
+    // Clip clip = AudioSystem.getClip();
+    // clip.open(audioInputStream);
+    // clip.start();
+    // // Thread.sleep(clip.getMicrosecondLength() / 1000);
+    // } catch (Exception e) {
+    // System.out.println("Error playing sound: " + e.getMessage());
+    // }
+    // }
 
     /**
      * Closes socket and streams neatly and exits
