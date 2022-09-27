@@ -19,7 +19,7 @@ public class ReceiverThread implements Runnable {
         try {
             DatagramSocket socket = new DatagramSocket(port);
 
-            byte[] data = new byte[508];
+            byte[] data = new byte[256];
 
             format = new AudioFormat(8000, 16, 2, true, true);
 
@@ -32,7 +32,7 @@ public class ReceiverThread implements Runnable {
             DatagramPacket packet = new DatagramPacket(data, data.length);
             ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
 
-            while (Client.endCall() != true || bEnd != true) {
+            while (Client.endCall() != true && bEnd != true) {
                 socket.receive(packet);
                 ais = new AudioInputStream(bais, format, packet.getLength());
                 System.out.println("Listening ...");
@@ -46,6 +46,7 @@ public class ReceiverThread implements Runnable {
             ais.close();
             socket.close();
             bEnd = false;
+            Thread.currentThread().interrupt();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();

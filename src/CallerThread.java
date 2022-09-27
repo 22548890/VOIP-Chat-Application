@@ -29,12 +29,12 @@ public class CallerThread implements Runnable {
             line.open(format);
             line.start();
 
-            byte[] data = new byte[508];
+            byte[] data = new byte[256];
 
             address = InetAddress.getByName(calleeIP);
             // address = InetAddress.getByName("25.86.115.11");
             DatagramSocket socket = new DatagramSocket();
-            while (Client.endCall() != true || bEnd != true) { // ends call both sides
+            while (Client.endCall() != true && bEnd != true) { // ends call both sides
                 line.read(data, 0, data.length);
                 packet = new DatagramPacket(data, data.length, address, port);
                 socket.send(packet);
@@ -47,6 +47,8 @@ public class CallerThread implements Runnable {
             line.close();
             socket.close();
             bEnd = false;
+            // terminate thread
+            Thread.currentThread().interrupt();
 
         } catch (LineUnavailableException e) {
             e.printStackTrace();
