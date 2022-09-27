@@ -223,6 +223,7 @@ public class Client implements ActionListener {
                     return;
                 } else if(text.startsWith("/create") || text.startsWith("/join")) {
                     // ignore and send to server
+                    msg = new Message(text, username);
                 } else {
                     enteredText.insert("SERVER: Incorrect command. /help for more\n", enteredText.getText().length());
                     return;

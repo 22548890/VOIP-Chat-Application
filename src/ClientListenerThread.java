@@ -119,8 +119,8 @@ public class ClientListenerThread implements Runnable {
             // msg = "Voice note received - type /listen to listen";
             enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
         } else if (message.text().endsWith("/call") && message.text().startsWith("whispers to") && !message.from().equals(username)) {
-            int result = JOptionPane.showConfirmDialog((Component) null, "Incoming call from " + message.from(),
-                    "alert", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog((Component) null, "Click OK to accept call from " + message.from(),
+                    "Incoming call", JOptionPane.OK_CANCEL_OPTION);
             if (result == 0) {
                 String ip = "";
                 while (ip.isBlank()) {
@@ -140,7 +140,7 @@ public class ClientListenerThread implements Runnable {
             enteredText.insert(msg + "\n", enteredText.getText().length());
         }
     }
-    
+
 
     /**
      * Closes socket and streams neatly and exits
