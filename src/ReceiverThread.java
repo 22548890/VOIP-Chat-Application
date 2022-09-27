@@ -33,13 +33,18 @@ public class ReceiverThread implements Runnable {
             DatagramPacket packet = new DatagramPacket(data, data.length);
             ByteArrayInputStream bais = new ByteArrayInputStream(packet.getData());
 
-            while (true) {
+            while (Client.endCall() != true) {
                 socket.receive(packet);
                 ais = new AudioInputStream(bais, format, packet.getLength());
 
                 // System.out.println("Listening ...");
                 sourceDataLine.write(packet.getData(), 0, packet.getData().length);
             }
+            // call ended
+            System.out.println("Call ended");
+            sourceDataLine.drain();
+            sourceDataLine.close();
+            socket.close();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -48,5 +53,5 @@ public class ReceiverThread implements Runnable {
             e.printStackTrace();
         }
     }
-    
+
 }

@@ -142,7 +142,7 @@ public class ClientListenerThread implements Runnable {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-            Thread.sleep(clip.getMicrosecondLength() / 1000);
+            // Thread.sleep(clip.getMicrosecondLength() / 1000);
         } catch (Exception e) {
             System.out.println("Error playing sound: " + e.getMessage());
         }
