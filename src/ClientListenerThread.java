@@ -116,21 +116,6 @@ public class ClientListenerThread implements Runnable {
             }
             // set message to voice note received
             // msg = "Voice note received - type /listen to listen";
-            enteredText.insert("Voice note received - type /listen to listen\n", enteredText.getText().length());
-        } else if (message.text().startsWith("/listen")) {
-            // play sound file java sound api
-            File voiceNoteFile = new File("received.wav");
-            msg = username;
-            message.setText("Playing voice note...");
-            msg += ": " + message.text();
-            System.out.println(msg);
-            enteredText.insert(msg + "\n", enteredText.getText().length());
-            playSound(voiceNoteFile);
-            message.setText("Played voice note.");
-            msg = message.text();
-            System.out.println(msg);
-            enteredText.insert(msg, enteredText.getText().length());
-            enteredText.insert("\n", enteredText.getText().length());
         } else {
             msg += ": " + message.text();
             System.out.println(msg);
@@ -144,7 +129,7 @@ public class ClientListenerThread implements Runnable {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
-            Thread.sleep(clip.getMicrosecondLength() / 1000);
+            // Thread.sleep(clip.getMicrosecondLength() / 1000);
         } catch (Exception e) {
             System.out.println("Error playing sound: " + e.getMessage());
         }
