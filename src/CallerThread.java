@@ -5,6 +5,7 @@ import javax.sound.sampled.*;
 public class CallerThread implements Runnable {
 
     private String calleeIP;
+    static boolean bEnd = false;
 
     public CallerThread(String calleeIP) {
         this.calleeIP = calleeIP;
@@ -28,21 +29,24 @@ public class CallerThread implements Runnable {
             line.open(format);
             line.start();
 
-            byte[] data = new byte[512];
+            byte[] data = new byte[24];
 
             address = InetAddress.getByName(calleeIP);
             // address = InetAddress.getByName("25.86.115.11");
             DatagramSocket socket = new DatagramSocket();
-            while (Client.endCall() != true) { // ends call both sides
+            while (Client.endCall() != true || bEnd != true) { // ends call both sides
                 line.read(data, 0, data.length);
                 packet = new DatagramPacket(data, data.length, address, port);
                 socket.send(packet);
             }
             // call ended
+            // end call both sides
+            ReceiverThread.bEnd = true;
             System.out.println("Call ended");
-            line.drain();
+            line.flush();
             line.close();
             socket.close();
+            bEnd = false;
 
         } catch (LineUnavailableException e) {
             e.printStackTrace();
