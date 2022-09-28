@@ -126,6 +126,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * @param msg from server message
+     */
     public void serverMessage(Message msg) {
         String[] parts = msg.text().split(" ", 2);
         String cmd = parts[0];
@@ -189,6 +192,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * @param msg broadcastRoom
+     */
     public void broadcastRoom(Message msg) {
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler.room.equals(room)) {
@@ -202,6 +208,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * @param msg broadcast
+     */
     public void broadcast(Message msg) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {

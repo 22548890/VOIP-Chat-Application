@@ -221,7 +221,7 @@ public class Client implements ActionListener {
                         enteredText.insert("No voice note received to listen to.\n", enteredText.getText().length());
                     }
                     return;
-                } else if(text.startsWith("/create") || text.startsWith("/join")) {
+                } else if (text.startsWith("/create") || text.startsWith("/join")) {
                     // ignore and send to server
                     msg = new Message(text, username);
                 } else {
@@ -255,6 +255,9 @@ public class Client implements ActionListener {
         }
     }
 
+    /**
+     * @return String converted from voice file
+     */
     private String voiceFileString() {
         byte[] byteData;
         String encodedString = null;
@@ -324,6 +327,18 @@ public class Client implements ActionListener {
         System.exit(0);
     }
 
+    /**
+     * @return boolean check for /leave
+     */
+    public static boolean endCall() {
+        if (typedText.getText().startsWith("/leave")) {
+            typedText.setText("");
+            enteredText.insert("Call ended.\n", enteredText.getText().length());
+            return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         int port = 12345;
         Socket socket = null;
@@ -376,14 +391,5 @@ public class Client implements ActionListener {
         client.listenForMessage();
         // client listen for file transfer
 
-    }
-
-    public static boolean endCall() {
-        if (typedText.getText().startsWith("/leave")) {
-            typedText.setText("");
-            enteredText.insert("Call ended.\n", enteredText.getText().length());
-            return true;
-        }
-        return false;
     }
 }

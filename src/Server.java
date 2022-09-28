@@ -1,13 +1,6 @@
 import java.io.*;
-import java.net.DatagramPacket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.net.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
 import javax.swing.*;
 
 /**

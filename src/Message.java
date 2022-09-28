@@ -45,6 +45,9 @@ public class Message implements Serializable {
         return from;
     }
 
+    /**
+     * @param msg set the text
+     */
     public void setText(String msg) {
         this.text = msg;
     }
