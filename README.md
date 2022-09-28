@@ -6,18 +6,18 @@ Markus Sass 22548890
 
 ## Server instructions:
 Compiling:
-- javac Server.java
+- `$ javac Server.java`
 
 Execution:
-- java Server
+- `$ java Server`
 
 
 ## Client instructions:
 Compiling:
-- javac Client.java
+- `$ javac Client.java`
 
 Execution:
-- java Client
+- `$ java Client`
 
 Usage:
 - just type for normal messsages
@@ -26,8 +26,8 @@ Usage:
 - click the voicenote button to record and send voicenote
 
 Commands:
-- "/create roomname" - creates room with roommname
-- "/join roomname" - joins room with roomname
+- "/create `roomname`" - creates room with roommname
+- "/join `roomname`" - joins room with roomname
 - "/exit" - exits the program
 - "/help" - prints help
 - "/listen" - listens to voice message
