@@ -16,8 +16,8 @@ public class stackClient {
     static AudioInputStream ais;
     static AudioFormat format;
     static boolean status = true;
-    static int port = 50005;
-    static int sampleRate = 44100;
+    static int port = 2169;
+    static int sampleRate = 8000;
 
     static DataLine.Info dataLineInfo;
     static SourceDataLine sourceDataLine;
@@ -27,7 +27,7 @@ public class stackClient {
 
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-        InetAddress group = InetAddress.getByName("225.6.7.8");
+        InetAddress group = InetAddress.getByName("239.0.0.7");
         MulticastSocket mSocket = new MulticastSocket(port);
         mSocket.setReuseAddress(true);
         mSocket.joinGroup(group);
@@ -42,7 +42,7 @@ public class stackClient {
          * then 9728.
          */
 
-        byte[] receiveData = new byte[4096];
+        byte[] receiveData = new byte[508];
 
         format = new AudioFormat(sampleRate, 16, 2, true, false);
         dataLineInfo = new DataLine.Info(SourceDataLine.class, format);

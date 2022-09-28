@@ -22,12 +22,12 @@ public class stackSender {
         DatagramPacket dgp;
 
         AudioFormat.Encoding encoding = AudioFormat.Encoding.PCM_SIGNED;
-        float rate = 44100.0f;
+        float rate = 8000.0f;
         int channels = 2;
         int sampleSize = 16;
         boolean bigEndian = false;
         InetAddress addr;
-        int port = 50005;
+        int port = 2169;
 
         System.out.println("Server started at port:" + port);
 
@@ -47,9 +47,9 @@ public class stackSender {
 
             line.start();
 
-            byte[] data = new byte[4096];
+            byte[] data = new byte[508];
 
-            addr = InetAddress.getByName("225.6.7.8");
+            addr = InetAddress.getByName("239.0.0.7");
             MulticastSocket socket = new MulticastSocket();
             while (true) {
                 // Read the next chunk of data from the TargetDataLine.
