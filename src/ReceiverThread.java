@@ -6,11 +6,15 @@ public class ReceiverThread implements Runnable {
 
     static AudioInputStream ais;
     static AudioFormat format;
-    static int port = 43215;
+    static int port;
 
     static DataLine.Info dataLineInfo;
     static SourceDataLine sourceDataLine;
     static boolean bEnd = false;
+
+    public ReceiverThread(int port) {
+        this.port = port;
+    }
 
     @Override
     public void run() {

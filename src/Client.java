@@ -233,15 +233,21 @@ public class Client implements ActionListener {
                 while (ip.isBlank()) {
                     ip = JOptionPane.showInputDialog("Enter the callee IP address: ");
                 }
-                CallerThread caller = new CallerThread(ip);
+
+                String port = "";
+                while (port.isBlank()) {
+                    port = JOptionPane.showInputDialog("Enter unique port for this call: ");
+                }
+
+                CallerThread caller = new CallerThread(ip, Integer.parseInt(port));
                 Thread thread = new Thread(caller);
                 thread.start();
 
-                ReceiverThread receiver = new ReceiverThread();
+                ReceiverThread receiver = new ReceiverThread(Integer.parseInt(port));
                 Thread rthread = new Thread(receiver);
                 rthread.start();
 
-                msg = new Message(text, username);
+                msg = new Message(text, username, Integer.parseInt(port));
             } else {
                 msg = new Message(text, username);
             }

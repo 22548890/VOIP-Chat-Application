@@ -6,9 +6,11 @@ public class CallerThread implements Runnable {
 
     private String calleeIP;
     static boolean bEnd = false;
+    private int port;
 
-    public CallerThread(String calleeIP) {
+    public CallerThread(String calleeIP, int port) {
         this.calleeIP = calleeIP;
+        this.port = port;
     }
 
     @Override
@@ -19,7 +21,7 @@ public class CallerThread implements Runnable {
         DatagramPacket packet;
 
         InetAddress address;
-        int port = 43215;
+        // int port = 43215;
 
         AudioFormat format = new AudioFormat(8000, 16, 2, true, true);
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);

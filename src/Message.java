@@ -5,7 +5,7 @@ import java.io.Serializable;
  */
 public class Message implements Serializable {
     private String text, from;
-    boolean call;
+    private int callPort;
 
     /**
      * Constructor for broadcast
@@ -16,7 +16,6 @@ public class Message implements Serializable {
     public Message(String text, String from) {
         this.text = text;
         this.from = from;
-        this.call = false;
     }
 
     /**
@@ -25,10 +24,10 @@ public class Message implements Serializable {
      * @param text The actual text to send
      * @param from Where it is sent from
      */
-    public Message(String text, String from, boolean call) {
+    public Message(String text, String from, int callPort) {
         this.text = text;
         this.from = from;
-        this.call = call;
+        this.callPort = callPort;
     }
 
     /**
@@ -43,6 +42,10 @@ public class Message implements Serializable {
      */
     public String from() {
         return from;
+    }
+
+    public int callPort() {
+        return callPort;
     }
 
     public void setText(String msg) {

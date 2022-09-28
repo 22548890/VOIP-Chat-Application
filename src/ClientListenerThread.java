@@ -126,11 +126,11 @@ public class ClientListenerThread implements Runnable {
                 while (ip.isBlank()) {
                     ip = JOptionPane.showInputDialog("Enter the callee IP address: ");
                 }
-                CallerThread caller = new CallerThread(ip);
+                CallerThread caller = new CallerThread(ip, message.callPort());
                 Thread thread = new Thread(caller);
                 thread.start();
 
-                ReceiverThread receiver = new ReceiverThread();
+                ReceiverThread receiver = new ReceiverThread(message.callPort());
                 Thread rthread = new Thread(receiver);
                 rthread.start();
             }
